@@ -1,26 +1,32 @@
-import { Inter } from "@next/font/google";
-import { signIn, useSession, signOut } from "next-auth/react";
-const inter = Inter({ subsets: ["latin"] });
-export default function Home() {
+import { Box } from "@chakra-ui/react";
+import { NextPage, NextPageContext } from "next";
+import { getSession, useSession } from "next-auth/react";
+import Auth from "../components/Auth/Auth";
+import Chat from "../components/Chat/Chat";
+import { Session } from "next-auth";
+
+const Home: NextPage = () => {
   const { data: session } = useSession();
-  console.log("session", session);
+  const reloadSession = () => {};
 
   return (
-    <div>
-      <h1>Home</h1>
-
-      {session ? (
-        <div>
-          Signed in as {session?.user?.email} <br />
-          <button onClick={() => signOut()}>Sign out</button>
-        </div>
+    <Box>
+      {session?.user?.username ? (
+        <Chat />
       ) : (
-        <button onClick={() => signIn("google")}>Sign in</button>
+        <Auth session={session} reloadSession={reloadSession} />
       )}
-      <p>
-        <a href="https://www.youtube.com/watch?v=mj_Qe2jBYS4">link</a>
-      </p>
-      <p>min : 1:13:09</p>
-    </div>
+    </Box>
   );
+};
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
+  return {
+    props: {
+      session,
+    },
+  };
 }
+
+export default Home;
