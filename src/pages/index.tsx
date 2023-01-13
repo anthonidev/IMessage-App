@@ -3,14 +3,19 @@ import { NextPage, NextPageContext } from "next";
 import { getSession, useSession } from "next-auth/react";
 import Auth from "../components/Auth/Auth";
 import Chat from "../components/Chat/Chat";
-import { Session } from "next-auth";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
-  const reloadSession = () => {};
+  const reloadSession = () => {
+    const event = new Event("visibilitychange");
+    document.dispatchEvent(event);
+  };
+
+  console.log("session", session);
 
   return (
     <Box>
+      {"https://www.youtube.com/watch?v=RzpsU_JLjc4 "}
       {session?.user?.username ? (
         <Chat />
       ) : (
